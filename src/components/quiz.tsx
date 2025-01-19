@@ -8,7 +8,7 @@ import {
   getFeedback,
 } from "@src/lib/game-utils";
 import { Button } from "./ui/button";
-import { Progress } from "./ui/progress";
+import Progress from "./ui/progress";
 import { Card } from "./ui/card";
 import Image from "next/image";
 
@@ -18,7 +18,7 @@ interface QuizProps {
   onRestart: () => void;
 }
 
-export function Quiz({ countries, onGameComplete, onRestart }: QuizProps) {
+export function Quiz({ countries = [], onGameComplete, onRestart }: QuizProps) {
   const [gameState, setGameState] = useState<GameState>({
     currentRound: 1,
     score: 0,
@@ -52,7 +52,7 @@ export function Quiz({ countries, onGameComplete, onRestart }: QuizProps) {
   }, [startNewRound]);
 
   useEffect(() => {
-    if (gameState.gameComplete) return;
+    if (gameState?.gameComplete) return;
 
     const timer = setInterval(() => {
       setGameState((prev) => {
@@ -155,20 +155,21 @@ export function Quiz({ countries, onGameComplete, onRestart }: QuizProps) {
 
       <div className="mb-6">
         <div className="flex justify-between items-center mb-2">
-          <span>Time Left: {gameState.timeLeft}s</span>
-          <Progress value={(gameState.timeLeft / 15) * 100} />
+          <span>Time Left: {gameState?.timeLeft}s</span>
+          <Progress count={(gameState?.timeLeft / 15) * 100} />
         </div>
       </div>
 
-      {gameState.currentCountry && (
+      {gameState?.currentCountry ? (
         <div className="space-y-6">
           <div className="flex flex-col items-center space-y-4">
             <Image
-              src={gameState.currentCountry.flags.png}
+              src={gameState?.currentCountry?.flags?.png || ""}
               alt="Country Flag"
               className="h-auto shadow-md rounded"
               width={192}
               height={192}
+              priority
             />
             <h3 className="text-xl font-semibold">
               {gameState.currentCountry.name.common}
@@ -176,7 +177,7 @@ export function Quiz({ countries, onGameComplete, onRestart }: QuizProps) {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            {gameState.options.map((option) => {
+            {gameState?.options?.map((option) => {
               let buttonVariant = "outline";
               if (gameState.isRoundComplete) {
                 if (option === gameState.correctAnswer) {
@@ -200,7 +201,7 @@ export function Quiz({ countries, onGameComplete, onRestart }: QuizProps) {
             })}
           </div>
 
-          {gameState.isRoundComplete && (
+          {gameState.isRoundComplete ? (
             <div className="text-center">
               <Button onClick={handleNextRound} className="mt-4">
                 {gameState.currentRound === 10
@@ -208,9 +209,9 @@ export function Quiz({ countries, onGameComplete, onRestart }: QuizProps) {
                   : "Next Question"}
               </Button>
             </div>
-          )}
+          ) : null}
         </div>
-      )}
+      ) : null}
     </Card>
   );
 }

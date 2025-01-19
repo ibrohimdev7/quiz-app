@@ -108,7 +108,7 @@ export function GameContainer() {
         </Button>
       </div>
       <Quiz
-        countries={countries}
+        countries={countries || []}
         onGameComplete={updatePlayerScore}
         onRestart={handleLogout}
       />
